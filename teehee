@@ -1,11 +1,59 @@
-mcFirst = 
-mcLast = 
-pronoun1 =  //he-she-they
-pronoun2 =  //his-hers-them
-theyThem =  //true or false
-points = 0 
-music = //true or false
+var mcFirst;
+var mcLast;
+var mcPronoun;
+var pronoun1; //he-she-they
+var pronoun2; //his-hers-them
+var theyThem;
+var points = 0;
 
-//Lloyd Sprites with Uniform
+onEvent("settingsButton", "click", function( ) {
+  setScreen("settingsScreen");
+});
 
-//Lloyd Sprites with Casual
+onEvent("creditsButton", "click", function( ) {
+  setScreen("creditScreen");
+});
+
+onEvent("backButton", "click", function( ) {
+  setScreen("titleScreen");
+});
+
+onEvent("twButton", "click", function( ) {
+  setScreen("nameScreen");
+});
+
+onEvent("changeNameButton", "click", function( ) {
+  showElement("nameInputFirstSetting");
+  showElement("nameInputLastSetting");
+  showElement("firstnameLabel");
+  showElement("lastnameLabel");
+  showElement("confirmNameSetButton");
+});
+
+onEvent("confirmNameSetButton", "click", function( ) {
+  showElement("nameChangedLabel");
+});
+
+onEvent("backSetButton", "click", function( ) {
+  setScreen("titleScreen");
+});
+
+onEvent("firstNameButton", "click", function( ) {
+  showElement("firstnamelabel");
+  showElement("confirmNameButton");
+  hideElement("lastNameLabel");
+  showElement("firstNameInput");
+  hideElement("lastNameInput");
+});
+
+onEvent("lastNameButton", "click", function( ) {
+  showElement("lastNameLabel");
+  showElement("confirmNameButton");
+  showElement("lastNameInput");
+  hideElement("firstnamelabel");
+  hideElement("firstNameInput");
+});
+
+onEvent("startButton", "click", function( ) {
+  setScreen("twScreen");
+});
