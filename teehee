@@ -1,6 +1,11 @@
 mcFirst = 
 mcLast = 
-pronoun1 =  #he/she/they
-pronoun2 =  #his/hers/them
-theyThem =
+pronoun1 =  //he-she-they
+pronoun2 =  //his-hers-them
+theyThem =  //true or false
 points = 0 
+music = //true or false
+
+//Lloyd Sprites with Uniform
+
+//Lloyd Sprites with Casual
