@@ -1,0 +1,737 @@
+var mcFirst = "Y/N";
+var mcLast = "L/N";
+var pronoun1 = "they";  //he-she-they
+var pronoun2 = "them";  //him-her-them
+var pronoun3 = "person"; //girl-guy-person
+var theyThem = false;
+var points = 0;
+
+//Takes player from Title Screen to Settings Screen
+onEvent("settingsButton", "click", function( ) {
+  setScreen("settingsScreen");
+});
+
+//Takes player from Title Screen to Credits Screen
+onEvent("creditsButton", "click", function( ) {
+  setScreen("creditScreen");
+});
+
+//Takes player from Credits Screen to Title Screen
+onEvent("backCreditButton", "click", function( ) {
+  setScreen("titleScreen");
+});
+
+//Takes player from the Title Screen to the TW Screen
+onEvent("startButton", "click", function( ) {
+  setScreen("twScreen");
+});
+
+//Takes player from the TW Screen to the Naming Screen
+onEvent("twButton", "click", function( ) {
+  setScreen("nameScreen");
+});
+
+//Takes player from the Setting Screen to the Title Screen
+onEvent("backSetButton", "click", function( ) {
+  setScreen("titleScreen");
+});
+
+//Takes player from the Good End Result to the Title Screen
+onEvent("restartGameButtonGoodEnd", "click", function(){
+  setScreen("titleScreen");
+  reset();
+});
+
+//Takes player from the Bad End Result to the Title Screen
+onEvent("restartBadEndingButton", "click", function(){
+  setScreen("titleScreen");
+  reset();
+});
+
+//Show UI to change MC's name from the SETTINGS screen
+onEvent("changeNameButton", "click", function( ) {
+  showElement("nameInputFirstSetting");
+  showElement("nameInputLastSetting");
+  showElement("firstnameLabel");
+  showElement("lastnameLabel");
+  showElement("confirmNameSetButton");
+});
+
+//Change MC's name from the SETTINGS screen
+onEvent("confirmNameSetButton", "click", function( ) {
+  showElement("nameChangedLabel");
+  changeName(getText("nameInputFirstSetting"), getText("nameInputLastSetting"));
+});
+
+var nameCount = 0;
+//Show option to put in first name on NAMING screen.
+onEvent("firstNameButton", "click", function( ) {
+  if(getText("firstNameInput"!="")&&getText("firstNameInput"!=" ")){
+    mcFirst= getText("firstNameInput");
+  }
+  showElement("firstnamelabel");
+  hideElement("lastNameLabel");
+  showElement("firstNameInput");
+  hideElement("lastNameInput");
+  nameCount++;
+});
+
+//Show option to put in last name on NAMING screen.
+onEvent("lastNameButton", "click", function( ) {
+    showElement("lastNameLabel");
+    showElement("lastNameInput");
+    hideElement("firstnamelabel");
+    hideElement("firstNameInput");
+});
+
+//Make the MC's name from Naming Screen
+onEvent("confirmNameButton", "click", function( ) {
+  if(nameCount==0){
+    changeName(getText("firstNameInput"), getText("lastNameInput"));
+    showElement("lastNameLabel");
+    showElement("lastNameInput");
+    hideElement("firstnamelabel");
+    hideElement("firstNameInput");
+    nameCount++;
+  }
+  else if(nameCount==1){
+    changeName(getText("firstNameInput"), getText("lastNameInput"));
+    setText("confirmNameLabel", "Are you sure you want to be " + mcFirst + " " + mcLast + "?");
+    showElement("confirmNameLabel");
+    showElement("notName");
+    nameCount++;
+  }
+  else{
+    setScreen("pronounScreen");
+  }
+});
+
+//Undo's numCount so by display resets the screen.
+onEvent("notName", "click", function(){
+  hideElement("confirmNameLabel");
+  showElement("firstnamelabel");
+  hideElement("lastNameLabel");
+  showElement("firstNameInput");
+  hideElement("lastNameInput");
+  hideElement("notName");
+  nameCount=0;
+});
+
+//Sets MC's pronouns.
+onEvent("femaleRadio","click", function(){
+  showElement("pronounConfirm");
+});
+onEvent("maleRadio","click", function(){
+  showElement("pronounConfirm");
+});
+onEvent("neutralRadio","click", function(){
+  showElement("pronounConfirm");
+});
+onEvent("pronounConfirm", "click", function(){
+  if(getChecked("femaleRadio")){
+    pronoun1 = "she";
+    pronoun2 = "her";
+    pronoun3 = "girl";
+  }
+  else if(getChecked("maleRadio")){
+    pronoun1 = "he";
+    pronoun2 = "him";
+    pronoun3 = "guy";
+  }
+  else if(getChecked("neutralRadio")){
+    pronoun1 = "they";
+    pronoun2 = "them";
+    pronoun3 = "person";
+    theyThem = true;
+  }
+  playSound("foxxy-mulderr-hugs-from-a-gentle.mp3", true);
+  setScreen("scene1");
+});
+
+//Turn on audio
+onEvent("onAudioButton", "click", function( ) {
+  playSound("foxxy-mulderr-hugs-from-a-gentle.mp3", true);
+});
+
+//Turn off audio
+onEvent("offAudioButton", "click", function( ) {
+  stopSound();
+});
+
+onEvent("musicCreditsButton", "click", function( ) {
+  setScreen("musicCreditsScreen");
+});
+
+onEvent("musiccreditsBackButton", "click", function( ) {
+  setScreen("creditScreen");
+});
+
+
+
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+
+//Tells what line a scene/branch is on. 
+//Reset everytime a new dialouge list is used. 
+var lineNum = 0;
+//Tells whether the player has already made a choice yet.
+var onBranch = false;
+//Tells what branch (in the same scene) the player is in.
+var scene = "scene1";
+
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+//Scene 1
+var s1Dialouge = ["11th grade, the most dreaded year of high school. It's going great though, classes are not too hard and I think I have a good social life.",
+              "I feel a tap on my shoulder. Who is it?",
+              "Oh it's Lloyd!",
+              "\"Hi "+mcFirst+"! Ready for Calc? Those 30 problems from last night took me 3 hours to finish. I didn't even sleep till 12AM.\"",
+              "Make choice"];
+var s1Speaker = ["N/A", "N/A", "N/A", "Lloyd Cross", "Make choice"];
+var s1Sprite = ["N/A", "N/A", "s1BigSmile", "s1BigSmile", "Make choice"];
+
+//Scene 1 Branch 1 "You found the homework hard? You must be really dumb"
+var s1DialougeBr1 = ["\"...oh.\"", "Make choice"];
+var s1SpeakerBr1 = ["Lloyd Cross", "Make choice"];
+var s1SpriteBr1 = ["s1Neutral", "Make choice"];
+
+//Scene 1 Branch 1a "If you're up for it, I can help you with today's homework if you're stuck on it"
+var s1DialougeBr1A = ["\"That'll be great! I'll probably be needing it!\"", 
+                      "End"];
+var s1SpeakerBr1A = ["Lloyd Cross", "End"];
+var s1SpriteBr1A = ["s1SmallSmile", "End"];
+
+//Scene 1 Branch 1b "How are you even keeping with school?"
+var s1DialougeBr1B= ["\"Personally, if I don't get Calc homework out of the way first, I won't be able to focus on anything else.\"",
+                    "\"You're probably not turning anything in right?\"",
+                    "\" (Nervous laugh). Yeah, I wonder how I'm still able to survive in this school.\"",
+                    "End"];
+var s1SpeakerBr1B =["You", "You", "Lloyd Cross", "End"];
+var s1SpriteBr1B = ["s1Neutral", "s1Neutral", "s1Nervous", "End"];
+
+//Scene 1 Branch 2 "Oof that sucks, I hope you'd be able to catch up on some sleep tonight"
+var s1DialougeBr2 = ["\"I can even help if you ever get stuck on it!\"",
+                    "\"I'll definitely take you up on that offer.\"",
+                    "End"];
+var s1SpeakerBr2 = ["You", "Lloyd Cross", "End"];
+var s1SpriteBr2 = ["s1SmallSmile", "s1BigSmile", "End"];
+
+//Scene 1 Ending
+var s1DialougeEnd = ["We make small talk as we go to Calculus class. It's easy since we've been best friends since freshman year.",
+                    "He sat next to me for Computer Science class and we hit it off from there. Even with the stress and workload of junior year, we still managed to stay close. I hope things stay the way they are.",
+                    "End"];
+var s1SpeakerEnd = ["N/A", "N/A", "End"];
+var s1SpriteEnd = ["s1SmallSmile", "s1SmallSmile", "End"];
+
+onEvent("scene1", "click", function(){
+  if(scene == "scene1"){
+    if(s1Dialouge[lineNum]=="Make choice"){
+      showElement("s1option1");
+      showElement("s1option2");
+      setText("s1option1", "You found the homework hard? You must be really dumb");
+      setText("s1option2", "Oof that sucks, I hope you’d be able to catch up on some sleep tonight");
+    }
+    else{
+      changeDialouge(s1Dialouge, s1Speaker, s1Sprite);
+    }
+  }
+  else if(scene == "scene1 branch1"){
+    if(s1DialougeBr1[lineNum]=="Make choice"){
+      showElement("s1option1");
+      showElement("s1option2");
+      setText("s1option1", "If you're up for it, I can help you with today's homework if you're stuck on it");
+      setText("s1option2", "How are you even keeping with school?");
+    }
+    else{
+      changeDialouge(s1DialougeBr1, s1SpeakerBr1, s1SpriteBr1);
+    }
+  }
+  else if(scene == "scene1 branch1a"){
+    if(s1DialougeBr1A=="End"){
+      scene="scene1 end";
+      hideChoicesAndSprites("s1");
+      lineNum=0;
+      showElement(s1SpriteEnd[lineNum]);
+      setText("s1DialougeBox", s1DialougeEnd[lineNum]);
+      setText("s1SpeakerBox", " ");
+    }
+    else{
+      changeDialouge(s1DialougeBr1A, s1SpeakerBr1A, s1SpriteBr1A);
+    }
+  }
+  else if(scene == "scene1 branch1b"){
+    if(s1DialougeBr1B=="End"){
+      scene="scene1 end";
+      hideChoicesAndSprites("s1");
+      lineNum=0;
+      showElement(s1SpriteEnd[lineNum]);
+      setText("s1DialougeBox", s1DialougeEnd[lineNum]);
+      setText("s1SpeakerBox", " ");
+    }
+    else{
+      changeDialouge(s1DialougeBr1B, s1SpeakerBr1B, s1SpriteBr1B);
+    }
+  }
+  else if(scene == "scene1 branch2"){
+    if(s1DialougeBr2[lineNum]=="End"){
+      scene="scene1 end";
+      hideChoicesAndSprites("s1");
+      lineNum=0;
+      showElement(s1SpriteEnd[lineNum]);
+      setText("s1DialougeBox", s1DialougeEnd[lineNum]);
+      setText("s1SpeakerBox", " ");
+    }
+    else{
+      changeDialouge(s1DialougeBr2, s1SpeakerBr2, s1SpriteBr2);
+    }
+  }
+  else if(scene == "scene1 end"){
+    if(s1DialougeEnd[lineNum]=="End"){
+      setScreen("transitionScreen");
+      setTimeout(function() {
+        setScreen("scene2");
+      }, 1000);
+      scene = "scene2";
+      onBranch = false;
+      lineNum = 0;
+      setText("s1DialougeBox", " ");
+      setText("s1SpeakerBox", " ");
+    }
+    else{
+      changeDialouge(s1DialougeEnd, s1SpeakerEnd, s1SpriteEnd);
+    }
+  }
+});
+
+onEvent("s1option1", "click", function(){
+  if(scene == "scene1"){
+    onBranch = true;
+    scene = "scene1 branch1";
+    points--;
+  }
+  else if(scene == "scene1 branch1"){
+    scene = "scene1 branch1a";
+    points++;
+  }
+  hideChoicesAndSprites("s1");
+});
+
+onEvent("s1option2", "click", function(){
+  if(scene == "scene1"){
+    onBranch = true;
+    scene="scene1 branch2";
+    points++;
+  }
+  else if(scene == "scene1 branch1"){
+    scene = "scene1 branch1b";
+  }
+  hideChoicesAndSprites("s1");
+});
+
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+//Scene 2
+var s2Dialouge = ["I end up helping Lloyd with his Calculus homework in the library.",
+                  "\"... I'm completely lost. The chain rule gives me a headache and combine that with the quotient rule too!\"",
+                  "You're actually doing the problem right as of now, keep going and you'll have the right answer!",
+                  "\"Thanks.\"",
+                  "Lloyd looks to be happy but I can see that he looks stressed out. I think he has some eye bags but they're faint.",
+                  "Should I say something to him?",
+                  "Make choice"];
+var s2Speaker = ["N/A", "Lloyd Cross", "You", "Lloyd Cross", "N/A", "N/A", "Make choice"];
+var s2Sprite = ["s2Sad", "s2Sad", "s2Sad", "s2SmallSmile", "s2Nervous", "s2Nervous", "Make choice"];
+
+//Scene 2 Branch 1 "Say nothing"
+var s2DialougeBr1 = ["He'll probably say something to me if it's really that important.",
+                    "The tutoring session goes on as planned.",
+                    "End"];
+var s2SpeakerBr1 = ["N/A", "N/A", "End"];
+var s2SpriteBr1 = ["s2Nervous", "s2Sad", "End"];
+
+//Scene 2 Branch 2 "Check up on him"
+var s2DialougeBr2 = ["\"Out of pocket question but, are you doing alright?\"",
+                    "\"To be honest, not really. A lot of things are happening. My parents have been pressuring me to study more for the national exams since I didn't join many clubs.\"",
+                    "\"I still also have my regular classes and as you can see... I struggle keeping up. It's difficult trying to balance both. But I think with you helping me with at least one subject. I should be starting to catch up.\"",
+                    "\"You give me too much credit. I think it's your hard work that's helping you.\"",
+                    "\"Thanks again. I wouldn't know what to do without you.\"",
+                    "\"I just finished this problem section, can youo check over the answers?\"",
+                    "The tutoring session resumes, but there's now a look of relief on Lloyd's face.",
+                    "End"];
+var s2SpeakerBr2 = ["You", "Lloyd Cross", "Lloyd Cross", "You", "Lloyd Cross", "Lloyd Cross", "N/A", "End"];
+var s2SpriteBr2 = ["s2Nervous", "s2Sad", "s2SmallSmile", "s2SmallSmile", "s2BigSmile", "s2SmallSmile", "s2SmallSmile", "End"];
+
+onEvent("scene2", "click", function(){
+  if(scene == "scene2"){
+    if(s2Dialouge[lineNum]=="Make choice"){
+      showElement("s2option1");
+      showElement("s2option2");
+      setText("s2option1", "Say Nothing");
+      setText("s2option2", "Check up on him");
+    }
+    else{
+      changeDialouge(s2Dialouge, s2Speaker, s2Sprite);
+    }
+  }
+  else if(scene == "scene2 branch1"){
+    if(s2DialougeBr1[lineNum]=="End"){
+      setScreen("transitionScreen");
+      setTimeout(function(){
+        setScreen("scene3");
+      }, 1000);
+      scene = "scene3";
+      lineNum = 0;
+      setText("s2DialougeBox", " ");
+      setText("s2SpeakerBox", " ");
+    }
+    else{
+      changeDialouge(s2DialougeBr1, s2SpeakerBr1, s2SpriteBr1);
+    }
+  }
+  else if(scene == "scene2 branch2"){
+    if(s2DialougeBr2[lineNum]=="End"){
+      setScreen("transitionScreen");
+      setTimeout(function(){
+        setScreen("scene3");
+      }, 1000);
+      scene = "scene3";
+      lineNum = 0;
+      onBranch = false;
+    }
+    else{
+      changeDialouge(s2DialougeBr2, s2SpeakerBr2, s2SpriteBr2);
+    }
+  }
+});
+
+onEvent("s2option1", "click", function(){
+  scene = "scene2 branch1";
+  hideChoicesAndSprites("s2");
+});
+
+onEvent("s2option2", "click", function(){
+  scene = "scene2 branch2";
+  points++;
+  hideChoicesAndSprites("s2");
+});
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+//Scene 3
+var s3Dialouge = ["Walking through the courtyard, I hear someone call my name.",
+                  "\""+mcFirst+"! "+mcFirst+"!\"",
+                  "I turn around to see Lloyd running to me in a hurry. He seems distressed?",
+                  "Should I acknowledge him?",
+                  "Make choice"];
+var s3Speaker = ["N/A", "Lloyd Cross", "N/A", "N/A", "Make choice"];
+var s3Sprite = ["N/A", "s3Distress", "s3Distress", "s3Distress", "Make choice"];
+
+//Scene 3 Branch 1 "Hey Lloyd, are you okay?"
+var s3DialougeBr1 = ["\"Hey Lloyd, are you okay?\"",
+                    "\"No, I really need to talk to someone right now, are you free?\"",
+                    "Make choice"];
+var s3SpeakerBr1 = ["You", "Lloyd Cross", "Make choice"];
+var s3SpriteBr1 =["s3Distress", "s3Neutral", "Make choice"];
+
+//Scene 3 Branch 1a "Maybe later?"
+var s3DialougeBr1A = ["\"Actually...I really need to head to class Lloyd, maybe later?\"",
+                      "\"Oh... never mind then.\"",
+                      "You head to class...",
+                      "End"];
+var s3SpeakerBr1A = ["You", "Lloyd Cross", "N/A", "End"];
+var s3SpriteBr1A = ["s3Neutral", "s3Sad", "s3Sad", "End"];
+
+//Screne 3 Branch 1b "What's going on?"
+var s3DialougeBr1B = ["\"Yeah anytime Lloyd, what's going on?\"",
+                      "We went to a more isolated area.",
+                      "\"...So you know how I didn't do well on the Calc test? My dad got mad at me for that last night.\"",
+                      "\"He started to blame my clubs and stuff for 'not letting me study enough' and threatened to have me quit them all\"",
+                      "\"He also got up and left last night and hasn't come back since. I'm really worried about him, and I just don't know what to do.\"",
+                      "\"I'm so sorry to hear that Lloyd. I didn't know he was that hard on your grades. Though I think he'll be back soon. So don't stress about it too much okay?\"",
+                      "\"If anything happens and you need to talk, feel free to call or text me. I'm always free to lend an ear.\"",
+                      "\"Thank you so much. I just really needed someone to talk to.\"",
+                      "\"Anytime Lloyd, want to get some lunch together after school?\"",
+                      "\"Sure, I really need it.\"",
+                      "End"];
+var s3SpeakerBr1B = ["You", "N/A", "Lloyd Cross", "Lloyd Cross", "Lloyd Cross", "You", "You", "Lloyd Cross", "You", "Lloyd Cross", "End"];
+var s3SpriteBr1B = ["s3Sad", "s3Sad", "s3Sad", "s3Sad", "s3Distress", "s3Sad", "s3Sad", "s3SmallSmile", "s3SmallSmile", "s3BigSmile", "End"];
+
+//Scene 3 Branch 2 "Ignore him and head to class"
+var s3DialougeBr2 = ["\"...\"", "End"];
+var s3SpeakerBr2 = [" ", "End"];
+var s3SpriteBr2 = ["s3Sad", "End"];
+
+onEvent("scene3", "click", function(){
+  if(scene == "scene3"){
+    if(s3Dialouge[lineNum]=="Make choice"){
+      showElement("s3option1");
+      showElement("s3option2");
+      setText("s3option1", "Hey Lloyd, are you okay?");
+      setText("s3option2", "Ignore him and head to class.");
+    }
+    else{
+      changeDialouge(s3Dialouge, s3Speaker, s3Sprite);
+    }
+  }
+  else if(scene == "scene3 branch1"){
+    if(s3DialougeBr1[lineNum]=="Make choice"){
+      showElement("s3option1");
+      showElement("s3option2");
+      setText("s3option1", "Maybe later?");
+      setText("s3option2", "What's going on");
+    }
+    else{
+      changeDialouge(s3DialougeBr1, s3SpeakerBr1, s3SpriteBr1);
+    }
+  }
+  else if(scene == "scene3 branch2"){
+    if(s3DialougeBr2[lineNum]=="End"){
+      determineEnd();
+    }
+    else{
+      changeDialouge(s3DialougeBr2, s3SpeakerBr2, s3SpriteBr2);
+    }
+  }
+  else if(scene == "scene3 branch1a"){
+    if(s3DialougeBr1A[lineNum]=="End"){
+      determineEnd();
+    }
+    else{
+      changeDialouge(s3DialougeBr1A, s3SpeakerBr1A, s3SpriteBr1A);
+    }
+  }
+  else if(scene == "scene3 branch1b"){
+    if(s3DialougeBr1B[lineNum]=="End"){
+      determineEnd();
+    }
+    else if(lineNum==1){
+      hideElement("s3BGCourt");
+      showElement("s3BGClass");
+      changeDialouge(s3DialougeBr1B, s3SpeakerBr1B, s3SpriteBr1B);
+    }
+    else{
+      changeDialouge(s3DialougeBr1B, s3SpeakerBr1B, s3SpriteBr1B);
+    }
+  }
+});
+
+onEvent("s3option1", "click", function(){
+  if(onBranch==false){
+    scene = "scene3 branch1";
+    points++;
+    onBranch = true;
+  }
+  else{
+    scene = "scene3 branch1a";
+    points--;
+  }
+  hideChoicesAndSprites("s3");
+});
+
+onEvent("s3option2", "click", function(){
+  if(onBranch==false){
+    scene = "scene3 branch2";
+    points--;
+    onBranch = true; 
+  }
+  else{
+    scene = "scene3 branch1b";
+  }
+  hideChoicesAndSprites("s3");
+});
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+//Endings
+var goodDialouge = ["So much time has passed, but it feels like the first day of freshman year happened yesterday.",
+                "Lloyd and I were barely passing our classes junior year, but we finally got a break during senior year. Even though we had college applications and scholarships to apply for, we had each other for support.",
+                "It's now all over and we can now enjoy the next segment of our lives. Even if we're both seperated in college, we know that our time and friendship in highschool will help us through college life.",
+                "\"So, how are you enjoying your very last period of high school?\"",
+                "\"It just feels super surreal now that I'm a senior. I still remember crying over our past seniors when they left. Now it's our turn.\"",
+                "\"I know right!... Hey, do you also remember the time when you had a breakdown over a piece of code in Computer Science? It was such an easy fix too, you just forgot a comma in the second line.\"",
+                "\"hahaha... please don't remind me. I wanted to hit my head against the wall after that. Wait, what about that time you kept insisting that there were two hundred minutes in an hour for that one project back in sophmore year?\"",
+                "\"Touché, touché. Looks like we had our dumb moments.\"",
+                "We continue to reminisce about our past. Laughing over dumb moments, recalling forgotten times, and reconnecting over our hardships that we overcame together.",
+                "\"Hey, thanks for everything this year. I'll say it again but I don't think I would have been able to enjoy high school without you. I've said and done so much with you and I really appreciated you just hearing me out so often.\"",
+                "\"It's no problem. When it was needed, you did the same for me too. I'm just doing what a friend should normally do.\"",
+                "\"Yeah yeah, I just wanted to make sure you knew that though.\"",
+                "\"... After school, do you want to go to the theme park? I think we need to do something to celebrate our graduation.\"",
+                "\"Oh my gosh, yes! I'll be glad to. Can you pick me up through?\"",
+                "\"Sure!\"", "End"];
+var goodSpeaker = ["N/A", "N/A", "N/A", "Lloyd Cross", "You", "Lloyd Cross", "You", "Lloyd Cross", "N/A", "Lloyd Cross", "You", "Lloyd Cross", "Lloyd Cross", "You", "Lloyd Cross", "End"];
+var goodSprite =["sEndSmallSmile", "sEndSmallSmile", "sEndSmallSmile", "sEndSmallSmile", "sEndSmallSmile", "sEndBigSmile", "sEndBigSmile", "sEndSmallSmile", "sEndSmallSmile", "sEndBlushing", "sEndBlushing", "sEndBlushing", "sEndBigSmile", "sEndBigSmile", "sEndSmallSmile", "End"];
+
+var badDialouge = ["That's weird.",
+                  "I haven't talked to Lloyd in a while. Maybe I should talk to him during lunch.",
+                  "There he is. He's also with his friends from band.",
+                  "\"Hey Lloyd!\"",
+                  "\"...\"",
+                  "\"Lloyddddddd!\"",
+                  "\"...\"",
+                  "He isn't responding to me but he's not even talking much with his friends! At least he can spare me a couple minutes instead of ignoring me!",
+                  "\"Isn't that the "+pronoun3+" that Lloyd keep talking about?\"",
+                  "\"Yeah, I that's "+pronoun2+". I head that they were being an asshole to Lloyd.\"",
+                  "I think I've been nice of him though. Yeah, I may tease him about things but I don't think I've ever gone too far with it though. Looks like I really need to talk to him.",
+                  "\"HEY LLOYD!\"",
+                  "I grabbed his sleeve",
+                  "\"Can you please let go? I don't like random people grabbing me like that.\"",
+                  "\"I thought we were friends though?!\"",
+                  "\"Not with the way you've been treating me recently. Now please go away.\"",
+                  "\"...\"",
+                  "He's walking away. I think our friendship is done with. Maybe to Lloyd, it might have ended long before that.",
+                  "End"];
+var badSpeaker = ["N/A", "N/A", "N/A", "You", "Lloyd Cross", "You", "Lloyd Cross", "N/A", "Student A", "Student B", "N/A", "You", "N/A", "Lloyd Cross", "You", "Lloyd Cross", "You", "N/A", "End"];
+var badSprite = ["N/A", "N/A", "sEndSmallSmile", "sEndNeutral", "sEndIgnoring", "sEndNeutral", "sEndIgnoring", "sEndNeutral", "sEndNeutral", "sEndNeutral", "sEndNeutral", "sEndNeutral", "sEndIgnoring", "sEndMad", "sEndMad", "sEndMad", "N/A", "N/A", "End"];
+
+onEvent("sceneEnd", "click", function(){
+  if(scene == "Good Ending"){
+    if(goodDialouge[lineNum]=="End"){
+      setScreen("goodEndingScreen");
+    }
+    else{
+      changeDialouge(goodDialouge, goodSpeaker, goodSprite);
+    }
+  }
+  else if(scene == "Bad Ending"){
+    if(badDialouge[lineNum]=="End"){
+      setScreen("badEndingScreen");
+    }
+    else if(lineNum == 8 || lineNum == 9){
+      setProperty("endDialougeBox", "font-size", 12);
+      changeDialouge(badDialouge, badSpeaker, badSprite);
+    }
+    else{
+      setProperty("endDialougeBox", "font-size", 15);
+      changeDialouge(badDialouge, badSpeaker, badSprite);
+    }
+  }
+});
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------
+//Determines if there is a name change of if the default name is still used.
+function changeName(fName, lName){
+  if(lName!=""&&lName!=" "&&lName!=undefined){
+    mcLast = lName;
+  }
+  if(fName!=""&&fName!=" "&&fName!=undefined){
+    mcFirst = fName;
+  }
+  s1Dialouge[3]="\"Hi "+mcFirst+"! Ready for Calc? Those 30 problems from last night took me 3 hours to finish. I didn't even sleep till 12AM.\"";
+  s3Dialouge[1]="\""+mcFirst+"! "+mcFirst+"!\"";
+  badDialouge[8]= "\"Isn't that the "+pronoun3+" that Lloyd keep talking about?\"";
+  badDialouge[9]= "\"Yeah, I that's "+pronoun2+". I head that they were being an asshole to Lloyd.\"";
+}
+
+function changeDialouge(dialougeList, speakerList, spriteList){
+  //Determines what scene dialouge box it goes into
+  var dialougeBox = "";
+  var speakerBox = "";
+  if(scene.includes("scene1")){
+    dialougeBox = "s1DialougeBox";
+    speakerBox = "s1SpeakerBox";
+  }
+  else if(scene.includes("scene2")){
+    dialougeBox = "s2DialougeBox";
+    speakerBox = "s2SpeakerBox";
+  }
+  else if(scene.includes("scene3")){
+    dialougeBox = "s3DialougeBox";
+    speakerBox = "s3SpeakerBox";
+  }
+  else{
+    dialougeBox = "endDialougeBox";
+    speakerBox = "endSpeakerBox";
+  }
+  //Actually changes dialouge
+  if((scene=="scene1 branch1a"||scene=="scene1 branch1b")&&(lineNum+1==dialougeList.length)){
+    if(lineNum+1==dialougeList.length){
+      scene="scene1 end";
+      hideChoicesAndSprites("s1");
+      lineNum=0;
+      showElement(s1SpriteEnd[lineNum]);
+      setText("s1DialougeBox", s1DialougeEnd[lineNum]);
+      setText("s1SpeakerBox", " ");
+    }
+  }
+  else if(lineNum<dialougeList.length){
+    setText(dialougeBox, dialougeList[lineNum]);
+    if(speakerList[lineNum]!="N/A"){
+      setText(speakerBox, speakerList[lineNum]);
+    }
+    else{
+      setText(speakerBox, " ");
+    }
+    if(spriteList[lineNum]!="N/A"&&spriteList[lineNum]!="End"){
+      if(lineNum != 0){
+        if(spriteList[lineNum-1]!="N/A"){
+          hideElement(spriteList[lineNum-1]);
+        }
+      }
+      showElement(spriteList[lineNum]);
+    }
+  lineNum++;
+  }
+}
+
+function hideChoicesAndSprites(scene){
+  var elementListToHide= [];
+  if(scene == "s1"){
+    elementListToHide = ["s1option1", "s1option2", "s1BigSmile", "s1Nervous", "s1Neutral", "s1SmallSmile"];
+  }
+  else if(scene == "s2"){
+    elementListToHide = ["s2option1", "s2option2", "s2Sad", "s2SmallSmile", "s2Nervous", "s2Embarrased", "s2BigSmile"];
+  }
+  else if(scene == "s3"){
+    elementListToHide = ["s3option1", "s3option2", "s3BigSmile", "s3Sad", "s3SmallSmile", "s3Neutral", "s3Distress"];
+  }
+  else if(scene == "good Ending"){
+    elementListToHide = ["sEndSmallSmile", "sEndBigSmile", "sEndBlushing", "sEndNeutral", "sEndMad"];
+  }
+  else if(scene == "bad Ending"){
+    elementListToHide = ["sEndNeutral", "sEndMad","sEndSmallSmile", "sEndBigSmile", "sEndBlushing", "sEndIgnoring"];
+  }
+  for(var i = 0; i<elementListToHide.length; i++){
+    hideElement(elementListToHide[i]);
+  }
+  lineNum=0;
+}
+
+function determineEnd(){
+  hideElement("s3BGClass");
+  showElement("s3BGCourt");
+  if (points<2){
+    scene = "Bad Ending";
+    showElement("sEndCourt");
+    hideElement("sEndClass");
+  }
+  else{
+    scene = "Good Ending";
+    showElement("sEndClass");
+    hideElement("sEndCourt");
+  }
+  setScreen("transitionScreen");
+  setTimeout(function() {
+    setScreen("sceneEnd");
+  }, 1000);
+  onBranch = false;
+  lineNum = 0;
+  setText("s3DialougeBox", " ");
+  setText("s3SpeakerBox", " ");
+}
+
+function reset(){
+  lineNum = 0;
+  scene = "scene1";
+  onBranch = "false";
+  hideChoicesAndSprites("good Ending");
+  hideChoicesAndSprites("s1");
+  hideChoicesAndSprites("s2");
+  hideChoicesAndSprites("s3");
+  showElement(s2Sprite[0]);
+  setText("endDialougeBox", " ");
+  setText("endSpeakerBox", " ");
+  stopSound();
+}
