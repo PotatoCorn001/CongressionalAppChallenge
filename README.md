@@ -1,6 +1,7 @@
 # CongressionalAppChallenge
 
-This code is intended for Code.Org
+This code is intended for Code.Org JavaScript
+
 Credits:
 User Interface: Souha Hani
 Story Line: Souha Hani and Sarah Tran
