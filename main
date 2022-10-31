@@ -5,6 +5,7 @@ var pronoun2 = "them";  //him-her-them
 var pronoun3 = "person"; //girl-guy-person
 var theyThem = false;
 var points = 0;
+var playMusic = true;
 
 //Takes player from Title Screen to Settings Screen
 onEvent("settingsButton", "click", function( ) {
@@ -144,18 +145,21 @@ onEvent("pronounConfirm", "click", function(){
     pronoun3 = "person";
     theyThem = true;
   }
-  playSound("foxxy-mulderr-hugs-from-a-gentle.mp3", true);
+  if(playMusic == true){
+    playSound("foxxy-mulderr-hugs-from-a-gentle.mp3", true);
+  }
   setScreen("scene1");
 });
 
 //Turn on audio
 onEvent("onAudioButton", "click", function( ) {
-  playSound("foxxy-mulderr-hugs-from-a-gentle.mp3", true);
+  playMusic = true;
 });
 
 //Turn off audio
 onEvent("offAudioButton", "click", function( ) {
   stopSound();
+  playMusic = false;
 });
 
 onEvent("musicCreditsButton", "click", function( ) {
