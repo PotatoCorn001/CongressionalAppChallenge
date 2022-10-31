@@ -1,5 +1,8 @@
 # CongressionalAppChallenge
 
+Play the game!
+https://studio.code.org/projects/applab/vx7EWtJB5yfJl2Q8KxwCgwwk2-OXMxCgvIYOqyDx7ik 
+
 This code is intended for Code.Org JavaScript
 
 Credits:
